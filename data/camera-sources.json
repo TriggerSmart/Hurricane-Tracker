@@ -1,0 +1,52 @@
+{
+  "verified": "2026-10-08",
+  "included": [
+    {
+      "name": "Caltrans CWWP2 District 5",
+      "url": "https://cwwp2.dot.ca.gov/data/d5/cctv/cctvStatusD05.json",
+      "termsUrl": "https://dot.ca.gov/conditions-of-use",
+      "attribution": "Camera: Caltrans"
+    },
+    {
+      "name": "CouchTourist",
+      "url": "https://couchtourist.com/",
+      "access": "24 published iframe players; preserve camera-specific provider credit link; no claim that playback was browser-verified."
+    },
+    {
+      "name": "Perdido Key OG",
+      "url": "https://perdidokeyog.com/live-cam/",
+      "access": "Free published live-player embed with required credit."
+    },
+    {
+      "name": "EarthCam",
+      "url": "https://www.earthcam.com/site/linktous.php",
+      "access": "9 official camera-page links only. No EarthCam images or pages embedded."
+    },
+    {
+      "name": "Coastal operators",
+      "url": "https://www.jettyeast.com/webcams/",
+      "access": "5 primary coastal provider camera pages / hubs; external links only."
+    }
+  ],
+  "excluded": [
+    {
+      "name": "Houston TranStar",
+      "reason": "Terms prohibit hotlinking images without written permission",
+      "termsUrl": "https://traffic.houstontranstar.org/disclaimer.aspx"
+    },
+    {
+      "name": "FL511",
+      "reason": "Content reuse requires written permission from FDOT",
+      "termsUrl": "https://fl511.com/privacy"
+    },
+    {
+      "name": "Other Gulf/Atlantic DOT feeds",
+      "reason": "No fully verified permission plus stable public snapshot catalog established. Official 511 links provided, and operator-permitted cameras can be added."
+    }
+  ],
+  "notes": [
+    "63 entries: 24 refreshing Caltrans snapshots, 25 published camera players, 9 EarthCam camera pages, 5 other camera pages/hubs. Exact camera count may exceed entries for multi-view pages.",
+    "Third-party stream playback may change or be blocked. Iframe onload is not proof a video is playing.",
+    "Coordinates are retained only where sourced from an official catalog. New coastal entries have locality labels and no fabricated map pins."
+  ]
+}

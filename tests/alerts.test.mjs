@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {alertGroups,alertsInView} from '../js/alerts.js';
+const feature=(event,ring)=>({type:'Feature',properties:{event},geometry:ring?{type:'Polygon',coordinates:[ring]}:null});
+test('red tornado, green flood and amber other groups remain separate',()=>{const g=alertGroups([feature('Tornado Warning'),feature('Flash Flood Warning'),feature('Severe Thunderstorm Warning')]);assert.equal(g.tornado.features.length,1);assert.equal(g.tornado.color,'#ff4055');assert.equal(g.flood.features.length,1);assert.equal(g.other.features.length,1);});
+test('viewport filter catches crossing polygons and excludes distant alerts and missing geometry',()=>{const near=feature('Tornado Warning',[[-2,-.2],[2,-.2],[2,.2],[-2,.2],[-2,-.2]]),far=feature('Flood Warning',[[10,10],[11,10],[11,11],[10,11],[10,10]]),unknown=feature('Hurricane Warning');assert.deepEqual(alertsInView([near,far,unknown],[[-1,-1],[1,1]]),[near]);});
+test('viewport within a polygon hole is not counted as affected',()=>{const f=feature('Flood Warning',[[-4,-4],[4,-4],[4,4],[-4,4],[-4,-4]]);f.geometry.coordinates.push([[-2,-2],[2,-2],[2,2],[-2,2],[-2,-2]]);assert.equal(alertsInView([f],[[-1,-1],[1,1]]).length,0);});
+test('wrapped map views retain the same warning polygons',()=>{const f=feature('Tornado Warning',[[-91,29],[-89,29],[-89,31],[-91,31],[-91,29]]);assert.equal(alertsInView([f],[[268,28],[272,32]]).length,1);assert.equal(alertsInView([f],[[-300,28],[300,32]]).length,1);});

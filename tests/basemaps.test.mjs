@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {basePresentation,basemapTiles,palettes} from '../js/basemaps.js';
+const layers=[{id:'background',type:'background'},{id:'water',type:'fill'},{id:'boundary_state',type:'line'},{id:'road_primary',type:'line'},{id:'place_city',type:'symbol',minzoom:5}];
+test('black map has white borders and labels, keeps native label zoom thresholds',()=>{const p=basePresentation(layers,'dark','broadcast');assert.equal(p[0].paint['background-color'],'#05070a');assert.equal(p[2].paint['line-color'],'#ffffff');assert.equal(p[4].paint['text-color'],'#ffffff');assert.equal(p[4].minzoom,5);assert.equal(layers[0].paint,undefined);});
+test('satellite keeps borders and vector labels, terrain uses its own labels',()=>{const s=basePresentation(layers,'satellite','broadcast'),t=basePresentation(layers,'terrain','broadcast');assert.equal(s[3].layout.visibility,'none');assert.equal(s[4].layout.visibility,'visible');assert.equal(t[4].layout.visibility,'none');});
+test('satellite request uses dated NASA WMTS row then column, terrain is keyless',()=>{const s=basemapTiles('satellite','2026-10-07');assert.match(s.tiles[0],/2026-10-07\/GoogleMapsCompatible_Level9\/\{z\}\/\{y\}\/\{x\}\.jpg/);assert.equal(s.maxzoom,9);assert.match(basemapTiles('terrain').attribution,/OpenTopoMap/);assert.equal(basemapTiles('dark'),null);assert.ok(palettes.accessible.track!==palettes.broadcast.track);});

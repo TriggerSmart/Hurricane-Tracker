@@ -1,0 +1,8 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {getAlerts,queryLayer} from '../js/feeds.js';
+global.window={dispatchEvent(){}};global.CustomEvent=class {constructor(type,props){this.type=type;this.detail=props.detail;}};
+// Fetch is a boundary stub only: assertions check resulting application GeoJSON, not the stub calls.
+test('merges paginated alerts, filters events, and deduplicates IDs',async()=>{let n=0;const old=global.fetch;global.fetch=async()=>({ok:true,json:async()=>++n===1?{features:[{id:'a',properties:{event:'Tornado Warning'}},{id:'b',properties:{event:'Red Flag Warning'}}],pagination:{next:'https://api.weather.gov/alerts/active?cursor=2'}}:{features:[{id:'a',properties:{event:'Tornado Warning'}},{id:'c',properties:{event:'Flash Flood Warning'}}]}});try{const data=await getAlerts();assert.deepEqual(data.features.map(f=>f.id),['a','c']);}finally{global.fetch=old;}});
+test('NOAA HTTP failures are surfaced, never turned into empty data',async()=>{const old=global.fetch;global.fetch=async()=>({ok:false,status:503});try{await assert.rejects(queryLayer(5),/HTTP 503/);}finally{global.fetch=old;}});
+test('NOAA service error object is surfaced',async()=>{const old=global.fetch;global.fetch=async()=>({ok:true,json:async()=>({error:{message:'Service unavailable'}})});try{await assert.rejects(queryLayer(5),/Service unavailable/);}finally{global.fetch=old;}});
+test('NOAA empty successful result remains a real empty FeatureCollection',async()=>{const old=global.fetch;global.fetch=async()=>({ok:true,json:async()=>({type:'FeatureCollection',features:[]})});try{assert.deepEqual(await queryLayer(5),{type:'FeatureCollection',features:[]});}finally{global.fetch=old;}});
